@@ -12,7 +12,6 @@ def index():
     if request.method == 'POST':
         action = request.form.get('action')
 
-        # 과목 추가 처리
         if action == 'add':
             subject = request.form.get('subject')
             time = request.form.get('time')
@@ -20,14 +19,13 @@ def index():
             if subject and time:
                 try:
                     time = float(time)
-                    # 같은 이름 과목이 있으면 덮어쓰기
                     subjects = [(s, t) for s, t in subjects if s != subject]
                     subjects.append((subject, time))
                 except ValueError:
-                    pass  # 숫자가 아니면 무시
+                    pass  # 잘못된 입력 무시
 
-        # 계획 생성 처리
         elif action == 'generate':
+            # 계획 생성 시 입력칸을 무시하고, 기존 subjects만 사용
             if subjects:
                 schedule = generate_schedule(subjects)
 
