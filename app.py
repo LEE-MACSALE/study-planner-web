@@ -10,24 +10,29 @@ def index():
     schedule = {}
 
     if request.method == 'POST':
-        subject = request.form.get('subject')
-        time = request.form.get('time')
         action = request.form.get('action')
 
-        # 과목 추가
-        if action == 'add' and subject and time:
-            try:
-                time = float(time)
-                subjects = [(s, t) for s, t in subjects if s != subject]
-                subjects.append((subject, time))
-            except ValueError:
-                pass
+        # ✅ 과목 추가 버튼을 눌렀을 때만 입력값 사용
+        if action == 'add':
+            subject = request.form.get('subject', '').strip()
+            time = request.form.get('time', '').strip()
 
-        # 계획 생성
-        if action == 'generate':
-            schedule = generate_schedule(subjects)
+            if subject and time:
+                try:
+                    time = float(time)
+                    # 같은 이름이면 덮어쓰기
+                    subjects = [(s, t) for s, t in subjects if s != subject]
+                    subjects.append((subject, time))
+                except ValueError:
+                    pass  # 숫자 아닌 경우 무시
+
+        # ✅ 계획 생성은 입력칸 상관없이 기존 subjects만 사용
+        elif action == 'generate':
+            if subjects:  # 과목이 하나라도 있으면
+                schedule = generate_schedule(subjects)
 
     return render_template('index.html', subjects=subjects, schedule=schedule)
+
 
 def generate_schedule(subjects):
     total_hours = sum(t for _, t in subjects)
@@ -55,6 +60,6 @@ def generate_schedule(subjects):
 
     return dict(plan)
 
+
 if __name__ == '__main__':
     app.run(debug=True)
-
