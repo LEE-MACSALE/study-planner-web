@@ -1,0 +1,41 @@
+body {
+  font-family: "Malgun Gothic", sans-serif;
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  color: #333;
+}
+
+h1 {
+  color: #2c3e50;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 10px;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input, button {
+  margin: 5px 0;
+  padding: 10px;
+  font-size: 1em;
+  width: calc(100% - 22px);
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+ul {
+  padding-left: 20px;
+}

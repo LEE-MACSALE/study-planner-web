@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>학습시간플래너</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>학습시간플래너</h1>
+  <form method="post">
+    <input type="text" name="subject" placeholder="과목 이름" required>
+    <input type="number" step="0.1" name="time" placeholder="주간 학습 시간" required>
+    <button type="submit" name="action" value="add">과목 추가</button>
+    <button type="submit" name="action" value="generate">계획 생성</button>
+  </form>
+
+  {% if subjects %}
+    <h2>과목 목록</h2>
+    <ul>
+      {% for name, time in subjects %}
+        <li>{{ name }}: {{ "%.1f"|format(time) }}시간</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if schedule %}
+    <h2>요일별 계획</h2>
+    {% for day, tasks in schedule.items() %}
+      <h3>{{ day }}요일</h3>
+      <ul>
+        {% for subject, hour in tasks %}
+          <li>{{ subject }}: {{ "%.1f"|format(hour) }}시간</li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+  {% endif %}
+</body>
+</html>
