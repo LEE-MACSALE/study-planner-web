@@ -14,17 +14,16 @@ def index():
         time = request.form.get('time')
         action = request.form.get('action')
 
-        # 과목 추가 동작일 때만 subject, time 유효성 검사
+        # 과목 추가일 경우: subject와 time 모두 필요
         if action == 'add' and subject and time:
             try:
                 time = float(time)
-                # 동일 과목명 중복 제거 후 추가
                 subjects = [(s, t) for s, t in subjects if s != subject]
                 subjects.append((subject, time))
             except ValueError:
-                pass  # 유효하지 않은 입력은 무시
+                pass  # 무시
 
-        # 계획 생성 시: 등록된 과목이 있을 때만 실행
+        # 계획 생성일 경우: subjects가 존재할 때만 실행
         if action == 'generate' and subjects:
             schedule = generate_schedule(subjects)
 
