@@ -10,32 +10,31 @@ def index():
     schedule = {}
 
     if request.method == 'POST':
+        subject = request.form.get('subject')
+        time = request.form.get('time')
         action = request.form.get('action')
 
-        # ✅ 과목 추가 버튼을 눌렀을 때만 입력값 사용
-        if action == 'add':
-            subject = request.form.get('subject', '').strip()
-            time = request.form.get('time', '').strip()
+        # 과목 추가 동작일 때만 subject, time 유효성 검사
+        if action == 'add' and subject and time:
+            try:
+                time = float(time)
+                # 동일 과목명 중복 제거 후 추가
+                subjects = [(s, t) for s, t in subjects if s != subject]
+                subjects.append((subject, time))
+            except ValueError:
+                pass  # 유효하지 않은 입력은 무시
 
-            if subject and time:
-                try:
-                    time = float(time)
-                    # 같은 이름이면 덮어쓰기
-                    subjects = [(s, t) for s, t in subjects if s != subject]
-                    subjects.append((subject, time))
-                except ValueError:
-                    pass  # 숫자 아닌 경우 무시
-
-        # ✅ 계획 생성은 입력칸 상관없이 기존 subjects만 사용
-        elif action == 'generate':
-            if subjects:  # 과목이 하나라도 있으면
-                schedule = generate_schedule(subjects)
+        # 계획 생성 시: 등록된 과목이 있을 때만 실행
+        if action == 'generate' and subjects:
+            schedule = generate_schedule(subjects)
 
     return render_template('index.html', subjects=subjects, schedule=schedule)
 
-
 def generate_schedule(subjects):
     total_hours = sum(t for _, t in subjects)
+    if total_hours == 0:
+        return {}
+
     day_names = ['월', '화', '수', '목', '금', '토', '일']
     weights = [0.18, 0.18, 0.18, 0.16, 0.10, 0.10, 0.10]
     daily_targets = [round(total_hours * w, 2) for w in weights]
@@ -59,7 +58,6 @@ def generate_schedule(subjects):
         index += 1
 
     return dict(plan)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
