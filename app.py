@@ -10,20 +10,26 @@ def index():
     schedule = {}
 
     if request.method == 'POST':
-        subject = request.form.get('subject')
-        time = request.form.get('time')
         action = request.form.get('action')
 
-        if subject and time:
-            try:
-                time = float(time)
-                subjects = [(s, t) for s, t in subjects if s != subject]
-                subjects.append((subject, time))
-            except ValueError:
-                pass
+        # 과목 추가 처리
+        if action == 'add':
+            subject = request.form.get('subject')
+            time = request.form.get('time')
 
-        if action == 'generate':
-            schedule = generate_schedule(subjects)
+            if subject and time:
+                try:
+                    time = float(time)
+                    # 같은 이름 과목이 있으면 덮어쓰기
+                    subjects = [(s, t) for s, t in subjects if s != subject]
+                    subjects.append((subject, time))
+                except ValueError:
+                    pass  # 숫자가 아니면 무시
+
+        # 계획 생성 처리
+        elif action == 'generate':
+            if subjects:
+                schedule = generate_schedule(subjects)
 
     return render_template('index.html', subjects=subjects, schedule=schedule)
 
